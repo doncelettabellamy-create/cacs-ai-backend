@@ -54,15 +54,29 @@ Return JSON format like this:
       ]
     });
 
-    res.json({
-      ai_result: response.choices[0].message.content
-    });
-  } catch (error) {
-    console.error("AI route error:", error.message);
-    res.status(500).json({
-      error: "AI check failed"
-    });
-  }
+ const rawText = response.choices[0].message.content;
+
+const cleaned = rawText.replace(/```json|```/g, '').trim();
+
+let parsed;
+
+try {
+  parsed = JSON.parse(cleaned);
+} catch (e) {
+  parsed = {
+    issues: [],
+    risk_level: 'unknown',
+    notes: rawText
+  };
+}
+
+res.json(parsed);
+   } catch (error) {
+  console.error("AI route error:", error.message);
+  res.status(500).json({
+    error: "AI check failed"
+  });
+}
 });
 
 app.listen(PORT, () => {
