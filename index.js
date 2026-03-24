@@ -71,7 +71,7 @@ try {
   };
 }
 
-res.json(parsed);
+res.json({ text: parsed.notes || JSON.stringify(parsed) });
    } catch (error) {
   console.error("AI route error:", error.message);
   res.status(500).json({
